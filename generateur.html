@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Générateur de QR codes – Mariage Nicodiv</title>
+<style>
+body{margin:0;background:#0b0b0b;color:#f3e9d2;font-family:Georgia,serif}
+.w{max-width:900px;margin:0 auto;padding:20px 16px}
+h1{color:#d9b45a;font-size:1.5rem}
+label{display:block;margin:14px 0 6px;color:#d9b45a}
+input,textarea{width:100%;box-sizing:border-box;padding:10px;font:inherit;background:#1a1a1a;color:#f3e9d2;border:1px solid #d9b45a;border-radius:6px}
+textarea{height:240px}
+button{margin:14px 8px 0 0;padding:12px 18px;font:inherit;background:#d9b45a;color:#0b0b0b;border:0;border-radius:6px;cursor:pointer;font-weight:700}
+button:disabled{opacity:.5}
+#grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:20px}
+.c{background:#fff;color:#000;padding:6px;border-radius:6px;text-align:center;font:12px sans-serif}
+.c img{width:100%;display:block}
+.c a{color:#06c}
+#st{margin-top:10px;color:#d9b45a}
+</style></head><body><div class="w">
+<h1>Générateur de QR codes – Mariage Nicodiv</h1>
+<label>Adresse de ton site (celle donnée par Vercel ou ton nom de domaine)</label>
+<input id="base" placeholder="https://nicodiv.vercel.app">
+<label>Noms des invités (un par ligne)</label>
+<textarea id="names">Shetemba
+Sr Epérance
+Couple Eva Claude
+Couple Fermand Tshimanga
+Couple Pa Alain
+Couple Pa Benoit
+Couple Pa Sylvain
+Couple Parrain
+Fr Franck
+Tutu Maurice,Christian
+Couple Flavie
+Couple Heritier
+Couple Joli
+Couple Pa Jean-Claude
+Couple Trésor
+Emma Mbu
+Fr Joe
+Light
+Ma Adel
+Mireille
+Nonon Ci
+Pa Timothé
+Couple Pa Wilson
+Da Mireille
+JC
+Junior Cimpangila
+Ma Anne
+Ma Rosie
+Théo
+Vicky, Christine
+Clara
+Cooper
+Couple Adelard
+Cp
+Divine
+Emma Song
+Emma BG
+Gracia
+Henry
+James
+Joy’s
+Laurenne
+Mima
+Pa Jean
+Pa Narcisse
+Pa Paul
+Pa Tresor Et Mdm
+Ruth
+Sarah
+Claudine
+Couple Gedeon
+Couple Marie
+Couple Tutu Ishayi
+Couple Zemko
+Da Tina
+David
+Divin
+Dorcas
+Felly Mbala
+Seba
+Henock kabanga
+Josué
+Junior Mpiana
+Lucer Et Agathe
+Lydie
+Ma Chantal
+Ma Nelly
+Ma Solange
+Pa Simon
+Patient Zemko
+Ruth Tshilemba
+Sonas
+Demavic
+Ya Jeampy
+Ya Taty
+Ya Teddy
+Couple Mr Remy
+Mdm Abigael
+Mdm Pascaline
+Mr Augu
+Mr Christian
+Mr Erick
+Mr Franck
+Mr MK
+Mr Rachidi
+Mr Sam
+Mr Steven
+Couple Albert
+Couple Anne
+Couple Céline
+Couple David
+Couple Jeremie
+Couple Léon Albert
+Couple Léon Ya Mbuyi
+Couple Léon
+Couple Mbuyi
+Couple Pa Joseph
+Couple Papa Cris
+Couple Paul
+Couple Sothman
+Couple Maman Ana
+Couple Maman Marie et Marlène
+Couple FR Guelord & Ruben
+Couple Mua TSHILANDA et Maman Philo
+Couple Papa Jean II
+Couple Papa Elisé KANKOLONGU
+Couple Gaston NTAMBUE
+Couple Ben
+Couple THITSHI
+Couple papa Philemon
+Couple François KALONJI
+Couple papa Chadrack et Rebecca
+Couple Maman Chantal Papa Godelive
+Couple Papa Alain
+Couple Papa & Maman Chantal
+Couple Michel et Sarah
+Couple Francisca
+Couple Papa Mike
+Couple Jean BEDER
+Couple OWER
+Couple Syntiche
+Couple Etienne et Delphin
+Couple Prodite et Vigole
+Couple Merveille et Patrick MULOWAYI
+Couple Da Naomi et Patricia
+Couple Rév Joël MAKANDA
+Couple Rév Samy CIBANGU
+Couple Josué MULAMBA
+Couple Fidel et Fr Jordan
+Couple Papa Hyppolyte KABULA
+Couple Papa Vicky
+Couple papa Patty KABANGA
+Couple papa Passy MBUYI
+Couple papa TSHITSHI-TSHIBANGU
+Couple papa Michel
+Couple Maman Marguerite MUSADI
+Couple Papa Djo
+Couple Maman Fidèle et Maman Orthance
+Couple Pasteur Jérémie KALENGA
+Couple Apôtre Aggée NGANDU
+Couple Pasteur Jules NYANGUILE
+Couple Pasteur Fernand NKONGOLO
+Couple Clément KAMULETA
+Couple Apôtre Paul Prince KABAMBA
+Couple Pasteur Prophète Pascal MPOYI KALALA
+Couple Pasteur Israël MUKENDI
+Couple Pasteur Denis NDALA
+Couple Pasteur Timothée CIMPANGILA
+Couple Prophète WILLY NTITA
+Couple Papa Brel MUKANDILA
+Couple Pasteur Marcel MUKANDILA
+Couple Papa Marcel MUKA NDILA
+Couple Papa Paul
+Couple Pasteur Jean Marc MUKENDI
+Couple Oncle Blaise
+Couple Chancelle Joceline
+Couple Papa Eddy MUKENDI
+Couple Felly KALENGA
+Couple Bernard
+Couple Gracia & Mamy</textarea>
+<button id="go">1. Générer les QR codes</button>
+<button id="zip" disabled>2. Tout télécharger (ZIP)</button>
+<div id="st"></div>
+<div id="grid"></div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+var items=[];
+function slug(s){return s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^A-Za-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,60)}
+function make(name,base){
+  var qr=qrcode(0,"M");qr.addData(base+"/?n="+encodeURIComponent(name));qr.make();
+  var n=qr.getModuleCount(),cs=10,m=4,sz=(n+2*m)*cs,c=document.createElement("canvas");
+  c.width=sz;c.height=sz+70;var x=c.getContext("2d");
+  x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.fillStyle="#000";
+  for(var r=0;r<n;r++)for(var k=0;k<n;k++)if(qr.isDark(r,k))x.fillRect((k+m)*cs,(r+m)*cs,cs,cs);
+  var fs=30;x.textAlign="center";
+  do{x.font="bold "+fs+"px sans-serif";fs--}while(x.measureText(name).width>sz-20&&fs>10);
+  x.fillText(name,sz/2,sz+40);
+  return c;
+}
+document.getElementById("go").onclick=function(){
+  var base=document.getElementById("base").value.trim().replace(/\/+$/,"");
+  var st=document.getElementById("st"),g=document.getElementById("grid");
+  if(!base){st.textContent="Écris d’abord l’adresse de ton site.";return}
+  if(!/^https?:\/\//.test(base))base="https://"+base;
+  var names=document.getElementById("names").value.split("\n").map(function(s){return s.trim()}).filter(Boolean);
+  g.innerHTML="";items=[];
+  names.forEach(function(nm,i){
+    var c=make(nm,base),f=String(i+1).padStart(3,"0")+"-"+slug(nm)+".png";
+    items.push({c:c,f:f});
+    var d=document.createElement("div");d.className="c";
+    var im=new Image();im.src=c.toDataURL("image/png");
+    var a=document.createElement("a");a.href=im.src;a.download=f;a.textContent="Télécharger";
+    d.appendChild(im);d.appendChild(a);g.appendChild(d);
+  });
+  st.textContent=names.length+" QR codes générés. Scanne-en un avec ton téléphone pour vérifier.";
+  document.getElementById("zip").disabled=!names.length;
+};
+document.getElementById("zip").onclick=function(){
+  var st=document.getElementById("st");st.textContent="Préparation du ZIP…";
+  var z=new JSZip(),p=items.map(function(it){return new Promise(function(ok){
+    it.c.toBlob(function(b){z.file(it.f,b);ok()},"image/png")})});
+  Promise.all(p).then(function(){return z.generateAsync({type:"blob"})}).then(function(b){
+    var a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="QR-codes-mariage-Nicodiv.zip";a.click();
+    st.textContent="ZIP téléchargé.";
+  });
+};
+</script></body></html>
